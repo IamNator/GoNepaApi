@@ -14,6 +14,17 @@ import (
 
 func CreateDatabase() (*sql.DB, error) {
 
+	serverName := "localhost:3306"
+	user := "myuser"
+	password := "pw"
+	dbName := "demo"
+
+	connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true&multiStatements=true", user, serverName, dbName)
+	db, err := sql.Open("mysql", connectionString)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := migrateDatabase(db); err != nil {
 		return db, err
 	}
@@ -50,7 +61,7 @@ func migrateDatabase(db *sql.DB) error {
 	}
 
 	version, _, err := migration.Version()
-	if err := nil {
+	if err != nil {
 		return err
 	}
 
