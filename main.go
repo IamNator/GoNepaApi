@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/IamNator/GoNepaApi/app"
+	"github.com/IamNator/GoNepaApi/db"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 func setupRouter(router mux.Router) {
@@ -14,14 +15,19 @@ func setupRouter(router mux.Router) {
 		HandlerFunc(postFunction)
 }
 
-func postFunction(res http.ResponseWriter, req *http.Request) {
-	log.Println("You called a thing!")
-}
-
 func main() {
-	router := mux.NewRouter().StrictSlash(true)
 
-	setupRouter(router)
+	database, err := db.CreateDatabase()
+	if err != nil {
+		log.Fatal("Database connection failed: %s", err.Error())
+	}
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	app := &app.App{
+		Router:   mux.NewRouter().StrictSlash(true),
+		Database: database,
+	}
+
+	app.SetupRouter()
+
+	log.Fatal(http.ListenAndServe(":8080", app.Router))
 }
