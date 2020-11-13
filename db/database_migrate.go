@@ -33,6 +33,7 @@ import (
 // }
 
 func migrateDatabase(db *sql.DB) error {
+
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
 		return err
